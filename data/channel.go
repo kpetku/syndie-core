@@ -14,7 +14,6 @@ type Channel struct {
 	PublicReplies bool
 	Edition       int
 	Description   string
-	Avatar        []byte
 }
 
 func (c *Channel) Encode() ([]byte, error) {
@@ -27,19 +26,12 @@ func (c *Channel) Encode() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (c *Channel) Decode(data []byte) (*Channel, error) {
+func (c *Channel) Decode(data []byte) error {
 	buf := bytes.NewBuffer(data)
 	dec := gob.NewDecoder(buf)
 	err := dec.Decode(&c)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return c, nil
-}
-
-func DecodeChannel(c *Channel, data []byte) error {
-	buf := bytes.NewBuffer(data)
-	dec := gob.NewDecoder(buf)
-	err := dec.Decode(&c)
-	return err
+	return nil
 }

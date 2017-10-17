@@ -21,7 +21,7 @@ func InitDB() error {
 		if err != nil {
 			return err
 		}
-		_, err = tx.CreateBucketIfNotExists([]byte("bodykeys"))
+		_, err = tx.CreateBucketIfNotExists([]byte("messages"))
 		if err != nil {
 			return err
 		}
@@ -52,7 +52,7 @@ func ReadChannel(key []byte) (*Channel, error) {
 			c = nil
 			return nil
 		}
-		err := DecodeChannel(c, v)
+		err := c.Decode(v)
 		if err != nil {
 			return err
 		}
@@ -87,7 +87,7 @@ func ReadMessage(key []byte) (*Message, error) {
 			m = nil
 			return nil
 		}
-		err := DecodeMessage(m, v)
+		err := m.Decode(v)
 		if err != nil {
 			return err
 		}

@@ -3,6 +3,8 @@ package data
 import (
 	"bytes"
 	"encoding/gob"
+
+	"github.com/kpetku/go-syndie/syndieutil"
 )
 
 type Message struct {
@@ -11,6 +13,9 @@ type Message struct {
 	Subject       string
 	Body          string
 	TargetChannel string
+	Avatar        []byte
+	Author        string
+	Raw           *syndieutil.Message
 }
 
 func (m *Message) Encode() ([]byte, error) {
@@ -23,19 +28,12 @@ func (m *Message) Encode() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (m *Message) Decode(data []byte) (*Message, error) {
+func (m *Message) Decode(data []byte) error {
 	buf := bytes.NewBuffer(data)
 	dec := gob.NewDecoder(buf)
 	err := dec.Decode(&m)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return m, nil
-}
-
-func DecodeMessage(m *Message, data []byte) error {
-	buf := bytes.NewBuffer(data)
-	dec := gob.NewDecoder(buf)
-	err := dec.Decode(&m)
-	return err
+	return nil
 }
