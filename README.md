@@ -6,3 +6,6 @@ This is highly experimental software that you should not use in this state.
 
 # Dependencies
 * [boltdb](https://github.com/boltdb/bolt)
+
+# TODO
+* Refactor "fetcher", "gateway", et al into Go plugins
