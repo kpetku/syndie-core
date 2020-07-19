@@ -10,10 +10,11 @@ type Channel struct {
 	EncryptKey    string
 	Identity      string
 	IdentHash     string
-	ReadKeys      []string
+	ReadKeys      string
 	PublicReplies bool
 	Edition       int
 	Description   string
+	Avatar        []byte
 }
 
 func (c *Channel) Encode() ([]byte, error) {

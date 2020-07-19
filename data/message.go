@@ -8,14 +8,14 @@ import (
 )
 
 type Message struct {
-	ID            int
-	Name          string
+	ID int
 	Subject       string
 	Body          string
 	TargetChannel string
 	Avatar        []byte
 	Author        string
-	Raw           *syndieutil.Message
+	PostURI       syndieutil.URI
+	Raw           syndieutil.Message
 }
 
 func (m *Message) Encode() ([]byte, error) {

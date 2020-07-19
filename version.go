@@ -1,3 +1,4 @@
 package main
 
-const Version string = "v0.1"
+// Version is the current version of Syndied
+const Version string = "v0.1a"
