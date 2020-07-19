@@ -13,8 +13,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kpetku/go-syndie/archive/client"
-	"github.com/kpetku/go-syndie/syndieutil"
+	"github.com/kpetku/libsyndie/archive/client"
+	"github.com/kpetku/libsyndie/syndieutil"
 )
 
 const upperBoundLimit = 10000

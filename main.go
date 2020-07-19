@@ -6,9 +6,9 @@ import (
 	"os/user"
 	"time"
 
-	"github.com/kpetku/syndied/data"
-	"github.com/kpetku/syndied/fetcher"
-	"github.com/kpetku/syndied/gateway"
+	"github.com/kpetku/syndie-core/data"
+	"github.com/kpetku/syndie-core/fetcher"
+	"github.com/kpetku/syndie-core/gateway"
 )
 
 func main() {

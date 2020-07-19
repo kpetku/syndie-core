@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/kpetku/go-syndie/syndieutil"
-	"github.com/kpetku/syndied/data"
+	"github.com/kpetku/libsyndie/syndieutil"
+	"github.com/kpetku/syndie-core/data"
 )
 
 func ImportFile(name string) error {

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 
-	"github.com/kpetku/go-syndie/syndieutil"
+	"github.com/kpetku/libsyndie/syndieutil"
 )
 
 type Message struct {

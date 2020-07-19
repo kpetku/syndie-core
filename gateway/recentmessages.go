@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/boltdb/bolt"
-	"github.com/kpetku/go-syndie/syndieutil"
-	"github.com/kpetku/syndied/data"
+	"github.com/kpetku/libsyndie/syndieutil"
+	"github.com/kpetku/syndie-core/data"
 )
 
 func recentMessagesHandler(w http.ResponseWriter, r *http.Request) {
