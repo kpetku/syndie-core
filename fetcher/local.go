@@ -12,8 +12,9 @@ import (
 	"github.com/kpetku/syndie-core/data"
 )
 
-func ImportFile(name string) error {
-	dat, err := ioutil.ReadFile(name)
+// LocalFile opens a file from the path location and imports it into the database
+func (f *Fetcher) LocalFile(location string) error {
+	dat, err := ioutil.ReadFile(location)
 	if err != nil {
 		return err
 	}
@@ -48,7 +49,7 @@ func ImportFile(name string) error {
 		if cerr != nil {
 			log.Printf("error in WriteChannel: %s", cerr)
 		}
-		log.Printf("wrote metadata for file: %s", name)
+		log.Printf("wrote metadata for file: %s", location)
 		return nil
 	}
 	if outer.MessageType == "post" {
@@ -103,21 +104,26 @@ func ImportFile(name string) error {
 	return nil
 }
 
-func FetchFromDisk(path string) {
-	fi, err := os.Stat(path)
+// LocalDir recursively walks directories of Syndie messages from the path location and imports them into the database
+func (f *Fetcher) LocalDir(location string) error {
+	fi, err := os.Stat(location)
 	if err != nil {
-		log.Printf("Error fetchin': %s", err.Error())
+		return err
 	}
 	if fi.IsDir() {
-		fetchChannelList, _ := ioutil.ReadDir(path)
+		fetchChannelList, err := ioutil.ReadDir(location)
+		if err != nil {
+			return err
+		}
 		for _, c := range fetchChannelList {
 			if c.IsDir() {
-				FetchFromDisk(path + c.Name())
+				err = f.LocalFile(location + c.Name())
 			} else {
-				ImportFile(path + "/" + c.Name())
+				err = f.LocalFile(location + "/" + c.Name())
 			}
 		}
 	} else {
-		ImportFile(path)
+		f.LocalFile(location)
 	}
+	return err
 }
