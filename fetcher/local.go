@@ -2,6 +2,7 @@ package fetcher
 
 import (
 	"bytes"
+	"errors"
 	"io/ioutil"
 	"log"
 	"os"
@@ -56,11 +57,18 @@ func (f *Fetcher) LocalFile(location string) error {
 		out := data.Message{}
 		outer := syndieutil.New()
 		outer.Unmarshal(bytes.NewReader(dat))
-		//		lookup, err := data.ReadChannel([]byte(outer.TargetChannel))
-		lookup, err := data.ReadChannel([]byte(outer.PostURI.Channel))
-		if lookup == nil || err != nil {
-			log.Printf("error reading channel from bolt: %s", err)
-			return err
+		var lookup *data.Channel
+		if outer.TargetChannel != "" {
+			lookup, err = data.ReadChannel([]byte(outer.TargetChannel))
+		} else {
+			lookup, err := data.ReadChannel([]byte(outer.PostURI.Channel))
+			if lookup == nil || err != nil {
+				log.Printf("error reading channel from bolt: %s", err)
+				return err
+			}
+		}
+		if lookup == nil {
+			return errors.New("No ReadKeys found for message")
 		}
 		if len(strings.Fields(lookup.ReadKeys)) >= 0 {
 			for num, key := range strings.Fields(lookup.ReadKeys) {
