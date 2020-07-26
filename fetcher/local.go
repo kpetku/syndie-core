@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -114,24 +115,11 @@ func (f *Fetcher) LocalFile(location string) error {
 
 // LocalDir recursively walks directories of Syndie messages from the path location and imports them into the database
 func (f *Fetcher) LocalDir(location string) error {
-	fi, err := os.Stat(location)
-	if err != nil {
-		return err
-	}
-	if fi.IsDir() {
-		fetchChannelList, err := ioutil.ReadDir(location)
+	return filepath.Walk(location, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
-		for _, c := range fetchChannelList {
-			if c.IsDir() {
-				err = f.LocalFile(location + c.Name())
-			} else {
-				err = f.LocalFile(location + "/" + c.Name())
-			}
-		}
-	} else {
-		f.LocalFile(location)
-	}
-	return err
+		f.LocalFile(path)
+		return err
+	})
 }
