@@ -1,4 +1,8 @@
 # syndie-core
+This program contains the CLI, network, database backend for syndie-gui.
+
+Some minor utilities like a HTTP "gateway" bridge are also included.
+
 Major WIP, not much to see here.  Expect major refactoring and breaking changes.
 
 # Warning
