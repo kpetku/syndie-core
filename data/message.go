@@ -8,7 +8,7 @@ import (
 )
 
 type Message struct {
-	ID int
+	ID            int
 	Subject       string
 	Body          string
 	TargetChannel string
@@ -16,6 +16,7 @@ type Message struct {
 	Author        string
 	PostURI       syndieutil.URI
 	Raw           syndieutil.Message
+	Header        syndieutil.Header
 }
 
 func (m *Message) Encode() ([]byte, error) {

@@ -96,8 +96,8 @@ func (f *Fetcher) LocalFile(location string) error {
 					out.Subject = "No subject"
 				}
 				out.PostURI = outer.PostURI
-				log.Printf("!!!!!!!!!!!!!out ID is: %d", outer.PostURI.MessageID)
 				out.ID = outer.PostURI.MessageID
+				out.Header = *inner
 				encoded, errx := out.Encode()
 				if errx != nil {
 					log.Printf("error calling Encode: %s", errx)
