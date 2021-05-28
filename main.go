@@ -23,6 +23,8 @@ func main() {
 
 	flag.Parse()
 
+	log.Println("options configured, intializing syndie database")
+
 	derr := data.OpenDB(usr.HomeDir + "/.syndie/db/bolt.db")
 	if derr != nil {
 		log.Fatal(err)
@@ -37,6 +39,7 @@ func main() {
 	if err != nil {
 		log.Printf("err: %s", err)
 	}
+	log.Println("syndie database initialized, setting up fetcher")
 
 	f := fetcher.New(*fetchURL, *fetchPath, *fetchTimeout, *fetchDelay)
 
