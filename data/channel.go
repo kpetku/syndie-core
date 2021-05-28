@@ -2,7 +2,8 @@ package data
 
 import (
 	"bytes"
-	"encoding/gob"
+
+	"github.com/vmihailenco/msgpack/v5"
 )
 
 type Channel struct {
@@ -19,7 +20,7 @@ type Channel struct {
 
 func (c *Channel) Encode() ([]byte, error) {
 	buf := new(bytes.Buffer)
-	enc := gob.NewEncoder(buf)
+	enc := msgpack.NewEncoder(buf)
 	err := enc.Encode(c)
 	if err != nil {
 		return nil, err
@@ -29,7 +30,7 @@ func (c *Channel) Encode() ([]byte, error) {
 
 func (c *Channel) Decode(data []byte) error {
 	buf := bytes.NewBuffer(data)
-	dec := gob.NewDecoder(buf)
+	dec := msgpack.NewDecoder(buf)
 	err := dec.Decode(&c)
 	if err != nil {
 		return err
