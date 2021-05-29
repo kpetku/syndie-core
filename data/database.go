@@ -1,8 +1,6 @@
 package data
 
-import (
-	"github.com/boltdb/bolt"
-)
+import bolt "go.etcd.io/bbolt"
 
 var DB *bolt.DB
 

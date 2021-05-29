@@ -9,7 +9,7 @@ Major WIP, not much to see here.  Expect major refactoring and breaking changes.
 This is highly experimental software that you should not use in this state.
 
 # Dependencies
-* [boltdb](https://github.com/boltdb/bolt)
+* [bbolt](https://github.com/etcd-io/bbolt)
 
 # TODO
 * Refactor "fetcher", "gateway", et al into Go plugins
