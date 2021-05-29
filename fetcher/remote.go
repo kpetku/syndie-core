@@ -105,7 +105,7 @@ func (f *Fetcher) buildIndex() error {
 		if err != nil {
 			return err
 		}
-		req.Header.Add("User-Agent", "syndied")
+		req.Header.Add("User-Agent", "syndie-core")
 		var c = &http.Client{
 			Timeout: time.Second * time.Duration(f.timeout),
 		}
