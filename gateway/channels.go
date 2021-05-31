@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/boltdb/bolt"
 	"github.com/kpetku/libsyndie/syndieutil"
 	"github.com/kpetku/syndie-core/data"
+	bolt "go.etcd.io/bbolt"
 )
 
 func channelsHandler(w http.ResponseWriter, r *http.Request) {

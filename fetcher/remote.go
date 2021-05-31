@@ -111,7 +111,7 @@ func (f *Fetcher) buildIndex() error {
 		if err != nil {
 			return err
 		}
-		req.Header.Add("User-Agent", "syndied")
+		req.Header.Add("User-Agent", "syndie-core")
 		tr, err := f.SelectTransport(req.URL.Hostname())
 		if err != nil {
 			return err

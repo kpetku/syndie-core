@@ -1,4 +1,4 @@
 package main
 
-// Version is the current version of Syndied
-const Version string = "v0.1a"
+// Version is the current version of syndie-core
+const Version string = "v1.0.0"

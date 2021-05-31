@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/boltdb/bolt"
 	"github.com/kpetku/libsyndie/syndieutil"
 	"github.com/kpetku/syndie-core/data"
+	bolt "go.etcd.io/bbolt"
 )
 
 func recentMessagesHandler(w http.ResponseWriter, r *http.Request) {

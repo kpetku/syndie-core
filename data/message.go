@@ -2,9 +2,9 @@ package data
 
 import (
 	"bytes"
-	"encoding/gob"
 
 	"github.com/kpetku/libsyndie/syndieutil"
+	"github.com/vmihailenco/msgpack/v5"
 )
 
 type Message struct {
@@ -21,7 +21,7 @@ type Message struct {
 
 func (m *Message) Encode() ([]byte, error) {
 	buf := new(bytes.Buffer)
-	enc := gob.NewEncoder(buf)
+	enc := msgpack.NewEncoder(buf)
 	err := enc.Encode(m)
 	if err != nil {
 		return nil, err
@@ -31,7 +31,7 @@ func (m *Message) Encode() ([]byte, error) {
 
 func (m *Message) Decode(data []byte) error {
 	buf := bytes.NewBuffer(data)
-	dec := gob.NewDecoder(buf)
+	dec := msgpack.NewDecoder(buf)
 	err := dec.Decode(&m)
 	if err != nil {
 		return err
