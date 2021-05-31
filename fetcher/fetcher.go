@@ -37,7 +37,6 @@ func (f *Fetcher) SelectTransport(host string) (*http.Transport, error) {
 	var err error
 	if strings.HasSuffix(host, "i2p") {
 		if f.SAMAPIaddr != "" {
-			//			var sam *goSam.Client
 			if f.samClient == nil {
 				f.samClient, err = sam.I2PStreamSession("syndie", f.SAMAPIaddr, "syndie") //f.SAMAPIaddr)
 				if err != nil {
@@ -53,15 +52,13 @@ func (f *Fetcher) SelectTransport(host string) (*http.Transport, error) {
 		}
 	}
 	if f.TORSocksaddr != "" {
-		if strings.HasSuffix(host, "i2p") || f.anonOnly {
+		if strings.HasSuffix(host, "onion") || f.anonOnly {
 			if f.torClient == nil {
 				f.torClient, err = tor.Start(nil, nil)
 				if err != nil {
 					return nil, err
 				}
 			}
-			//defer t.Close()
-			//		var dialer *tor.Dialer
 			dialer, err := f.torClient.Dialer(nil, nil)
 			if err != nil {
 				return nil, err
