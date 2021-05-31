@@ -20,6 +20,9 @@ func main() {
 	fetchPath := flag.String("folder", usr.HomeDir+"/.syndie/incoming", "Specifies which folder to fetch messages into")
 	fetchTimeout := flag.Int("timeout", 10, "HTTP timeout value in seconds")
 	fetchDelay := flag.Int("delayms", 100, "Impose a random delay of up to n miliseconds when fetching")
+	anonOnly := flag.Bool("anon", false, "Only allow the client to make anonymous connections")
+	samaddr := flag.String("i2p", "127.0.0.1:7656", "SAM API address for fetching from I2P")
+	toraddr := flag.String("tor", "127.0.0.1:9050", "TOR Socks address for fetching from .onion and clearnet anonymously.")
 
 	flag.Parse()
 
@@ -41,7 +44,18 @@ func main() {
 	}
 	log.Println("syndie database initialized, setting up fetcher")
 
-	f := fetcher.New(*fetchURL, *fetchPath, *fetchTimeout, *fetchDelay)
+	f, err := fetcher.NewOpts(
+		fetcher.SetLocalLocation(*fetchPath),
+		fetcher.SetRemoteLocation(*fetchURL),
+		fetcher.SetTimeout(*fetchTimeout),
+		fetcher.SetDelay(*fetchDelay),
+		fetcher.SetAnonOnly(*anonOnly),
+		fetcher.SetSAMAPIAddr(*samaddr),
+		fetcher.SetTORSocksaddr(*toraddr),
+	)
+	if err != nil {
+		log.Fatal("err: %s", err)
+	}
 
 	ferr := f.RemoteFetch()
 	if ferr != nil {

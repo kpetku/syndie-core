@@ -1,13 +1,17 @@
 package fetcher
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"os/user"
+	"path/filepath"
 	"strings"
 
 	"github.com/cretz/bine/tor"
-	"github.com/eyedeekay/sam3/helper"
 	"github.com/eyedeekay/sam3"
+	"github.com/eyedeekay/sam3/helper"
 	"github.com/kpetku/libsyndie/archive/client"
 )
 
@@ -21,8 +25,9 @@ type Fetcher struct {
 	localLocation  string // localLocation is where to store the results on the local filesystem
 	timeout        int    // timeout in seconds
 	delay          int    // random delay of up to "delay" miliseconds between individual http requests
-	SAMAPIaddr     string
-	TORSocksaddr   string
+	anonOnly       bool   // only establish anonymous remote connections. Use Tor for all Non-I2P URLs.
+	SAMAPIaddr     string // SAM API address to use for setting up connections to archives on I2P
+	TORSocksaddr   string // TOR SOCKS Proxy to use for fetching .onion URL's and clearnet URL's anonymously
 	Client         *client.Client
 }
 
@@ -34,7 +39,7 @@ func (f *Fetcher) SelectTransport(host string) (*http.Transport, error) {
 		if f.SAMAPIaddr != "" {
 			//			var sam *goSam.Client
 			if f.samClient == nil {
-				f.samClient, err = sam.I2PStreamSession("syndie",f.SAMAPIaddr,"syndie") //f.SAMAPIaddr)
+				f.samClient, err = sam.I2PStreamSession("syndie", f.SAMAPIaddr, "syndie") //f.SAMAPIaddr)
 				if err != nil {
 					return nil, err
 				}
@@ -48,37 +53,89 @@ func (f *Fetcher) SelectTransport(host string) (*http.Transport, error) {
 		}
 	}
 	if f.TORSocksaddr != "" {
-		if f.samClient == nil {
-			f.torClient, err = tor.Start(nil, nil)
+		if strings.HasSuffix(host, "i2p") || f.anonOnly {
+			if f.torClient == nil {
+				f.torClient, err = tor.Start(nil, nil)
+				if err != nil {
+					return nil, err
+				}
+			}
+			//defer t.Close()
+			//		var dialer *tor.Dialer
+			dialer, err := f.torClient.Dialer(nil, nil)
 			if err != nil {
 				return nil, err
 			}
+			tr := http.Transport{
+				Dial: dialer.Dial,
+			}
+			log.Printf("Tor Client Created")
+			return &tr, err
 		}
-		//defer t.Close()
-		//		var dialer *tor.Dialer
-		dialer, err := f.torClient.Dialer(nil, nil)
-		if err != nil {
-			return nil, err
-		}
-		tr := http.Transport{
-			Dial: dialer.Dial,
-		}
-		log.Printf("Tor Client Created")
-		return &tr, err
 	}
 	log.Printf("Non-Anonymous Client Created")
-	return nil, nil
+	if !f.anonOnly {
+		return nil, nil
+	} else {
+		return nil, fmt.Errorf("Tor Client not available and anonymous-only specified. %s", "Failing before we de-anon.")
+	}
+}
+
+// NewOpts creates a new instance of Fetcher using a collection of functional
+// arguments
+func NewOpts(opts ...func(*Fetcher) error) (*Fetcher, error) {
+	usr, err := user.Current()
+	if err != nil {
+		return nil, err
+	}
+	var f Fetcher
+	f.remoteLocation = "http://127.0.0.1:8080"
+	f.localLocation = filepath.Join(usr.HomeDir, "/.syndie/incoming")
+	f.timeout = 10
+	f.delay = 100
+	f.anonOnly = false
+	f.Client = &client.Client{}
+	f.SAMAPIaddr = "127.0.0.1:7656"
+	f.TORSocksaddr = "127.0.0.1:9050"
+	for _, o := range opts {
+		if err := o(&f); err != nil {
+			return nil, err
+		}
+	}
+	os.MkdirAll(f.localLocation, 0755)
+	return &f, nil
 }
 
 // New creates a new instance of Fetcher
 func New(remote, path string, timeout, delay int) *Fetcher {
-	return &Fetcher{
-		remoteLocation: remote,
-		localLocation:  path,
-		timeout:        timeout,
-		delay:          delay,
-		Client:         &client.Client{},
-		SAMAPIaddr:     "127.0.0.1:7656",
-		TORSocksaddr:   "127.0.0.1:9050",
+	f, err := NewOpts(
+		SetLocalLocation(path),
+		SetRemoteLocation(remote),
+		SetTimeout(timeout),
+		SetDelay(delay),
+		SetSAMAPIAddr(""),
+		SetTORSocksaddr(""),
+	)
+	if err != nil {
+		log.Fatal(err)
 	}
+	return f
+}
+
+// New creates a new instance of Fetcher which will fail if it cannot
+// make an anonymous connection.
+func NewAnonOnly(remote, path string, timeout, delay int) *Fetcher {
+	f, err := NewOpts(
+		SetLocalLocation(path),
+		SetRemoteLocation(remote),
+		SetTimeout(timeout),
+		SetDelay(delay),
+		SetAnonOnly(true),
+		SetSAMAPIAddr("127.0.0.1:7656"),
+		SetTORSocksaddr("127.0.0.1:9050"),
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return f
 }
