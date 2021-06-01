@@ -38,7 +38,7 @@ func (f *Fetcher) SelectTransport(host string) (*http.Transport, error) {
 	if strings.HasSuffix(host, "i2p") {
 		if f.SAMAPIaddr != "" {
 			if f.samClient == nil {
-				f.samClient, err = sam.I2PStreamSession("syndie", f.SAMAPIaddr, "syndie") //f.SAMAPIaddr)
+				f.samClient, err = sam.I2PStreamSession("syndie", f.SAMAPIaddr, filepath.Join(f.localLocation, "syndie"))
 				if err != nil {
 					return nil, err
 				}
