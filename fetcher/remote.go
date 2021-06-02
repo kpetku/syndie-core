@@ -37,9 +37,14 @@ func (f *Fetcher) RemoteFetch() error {
 		if err != nil {
 			return err
 		}
+		tr, err := f.SelectTransport(req.URL.Hostname())
+		if err != nil {
+			return err
+		}
 		req.Header.Add("User-Agent", "syndie-core")
 		var c = &http.Client{
-			Timeout: time.Second * time.Duration(f.timeout),
+			Timeout:   time.Second * time.Duration(f.timeout),
+			Transport: tr,
 		}
 		resp, err := c.Do(req)
 		if err != nil {
@@ -51,6 +56,7 @@ func (f *Fetcher) RemoteFetch() error {
 		if err != nil {
 			return err
 		}
+		log.Printf("Status: %d", resp.StatusCode)
 		if resp.StatusCode == http.StatusOK {
 			// Validate the message and take the PostURI messageID from it
 			outer := syndieutil.New()
@@ -106,8 +112,13 @@ func (f *Fetcher) buildIndex() error {
 			return err
 		}
 		req.Header.Add("User-Agent", "syndie-core")
+		tr, err := f.SelectTransport(req.URL.Hostname())
+		if err != nil {
+			return err
+		}
 		var c = &http.Client{
-			Timeout: time.Second * time.Duration(f.timeout),
+			Timeout:   time.Second * time.Duration(f.timeout),
+			Transport: tr,
 		}
 
 		resp, err := c.Do(req)
