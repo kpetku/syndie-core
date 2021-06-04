@@ -21,7 +21,7 @@ import (
 func (f *Fetcher) RemoteFetch() error {
 	err := f.buildIndex()
 	if err != nil {
-		f.LocalDir(f.remoteLocation)
+		return err
 	}
 	if f.Client.Urls == nil {
 		return errors.New("no URLs to fetch")
@@ -120,7 +120,6 @@ func (f *Fetcher) buildIndex() error {
 			Timeout:   time.Second * time.Duration(f.timeout),
 			Transport: tr,
 		}
-
 		resp, err := c.Do(req)
 		if err != nil {
 			return err
