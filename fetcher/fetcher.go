@@ -1,7 +1,7 @@
 package fetcher
 
 import (
-	"fmt"
+	"errors"
 	"log"
 	"net/http"
 	"os"
@@ -70,12 +70,11 @@ func (f *Fetcher) SelectTransport(host string) (*http.Transport, error) {
 			return &tr, err
 		}
 	}
-	log.Printf("Non-Anonymous Client Created")
-	if !f.anonOnly {
-		return nil, nil
-	} else {
-		return nil, fmt.Errorf("Tor Client not available and anonymous-only specified. %s", "Failing before we de-anon.")
+	if f.anonOnly {
+		return nil, errors.New("tor client not available and anonymous-only specified. Failing before we de-anon")
 	}
+	log.Printf("Non-Anonymous Client Created")
+	return &http.Transport{}, nil
 }
 
 // NewOpts creates a new instance of Fetcher using a collection of functional
