@@ -54,7 +54,7 @@ func main() {
 		fetcher.SetTORSocksaddr(*toraddr),
 	)
 	if err != nil {
-		log.Fatal("err: %s", err)
+		log.Fatalf("err: %s", err)
 	}
 
 	ferr := f.RemoteFetch()

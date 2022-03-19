@@ -6,6 +6,7 @@ import (
 )
 
 func New() {
+	PullMessagesFromDB()
 	http.HandleFunc("/", channelsHandler)
 	http.HandleFunc("/channels", channelsHandler)
 	http.HandleFunc("/recentmessages", recentMessagesHandler)
