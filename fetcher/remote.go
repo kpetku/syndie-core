@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kpetku/libsyndie/archive/client"
+	"github.com/kpetku/libsyndie/archive"
 	"github.com/kpetku/libsyndie/syndieutil"
 )
 
@@ -126,7 +126,7 @@ func (f *Fetcher) buildIndex() error {
 		}
 		defer resp.Body.Close()
 
-		f.Client = client.New()
+		f.Client = archive.NewClient()
 		return f.Client.Parse(resp.Body)
 	}
 	return err

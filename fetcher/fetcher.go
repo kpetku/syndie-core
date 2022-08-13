@@ -11,8 +11,8 @@ import (
 
 	"github.com/cretz/bine/tor"
 	"github.com/eyedeekay/sam3"
-	"github.com/eyedeekay/sam3/helper"
-	"github.com/kpetku/libsyndie/archive/client"
+	sam "github.com/eyedeekay/sam3/helper"
+	"github.com/kpetku/libsyndie/archive"
 )
 
 const upperBoundLimit = 10000
@@ -28,7 +28,7 @@ type Fetcher struct {
 	anonOnly       bool   // only establish anonymous remote connections. Use Tor for all Non-I2P URLs.
 	SAMAPIaddr     string // SAM API address to use for setting up connections to archives on I2P
 	TORSocksaddr   string // TOR SOCKS Proxy to use for fetching .onion URL's and clearnet URL's anonymously
-	Client         *client.Client
+	Client         *archive.Client
 }
 
 // SelectTransport decides, based on the hostname, whether to use an I2P
@@ -90,7 +90,7 @@ func NewOpts(opts ...func(*Fetcher) error) (*Fetcher, error) {
 	f.timeout = 10
 	f.delay = 100
 	f.anonOnly = false
-	f.Client = &client.Client{}
+	f.Client = &archive.Client{}
 	f.SAMAPIaddr = "127.0.0.1:7656"
 	f.TORSocksaddr = "127.0.0.1:9050"
 	for _, o := range opts {
